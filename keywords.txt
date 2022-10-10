@@ -1,0 +1,37 @@
+#######################################
+# Syntax Coloring Map For EE894_i2c
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+ee894I2c	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+getAllMeasurements		KEYWORD2
+getTempHum			KEYWORD2
+getCo2AverCo2RawPressure	KEYWORD2
+readSensorname			KEYWORD2
+changeSensorname		KEYWORD2
+changeCAMDate			KEYWORD2
+readCAMDate			KEYWORD2
+readCAM				KEYWORD2
+changeCAM			KEYWORD2
+changeOffsetInCAM		KEYWORD2
+changeGainInCAM			KEYWORD2
+changeLowerLimitInCAM		KEYWORD2
+changeUpperLimitInCAM		KEYWORD2
+changeCo2MeasuringInterval	KEYWORD2
+readCo2MeasuringInterval	KEYWORD2
+getErrorString			KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+CRC8_ONEWIRE_POLY	LITERAL1
+CRC8_ONEWIRE_START	LITERAL1
