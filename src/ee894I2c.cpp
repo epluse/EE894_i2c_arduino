@@ -78,7 +78,7 @@ uint8_t ee894I2c::getTempHum(float &temperature, float &humidity)
 uint8_t ee894I2c::getCo2AverCo2RawPressure(float &co2Aver, float &co2Raw, float &pressure)
 {
   unsigned char Command[] = {0xE0, 0x27};
-  unsigned char i2cResponse[6];
+  unsigned char i2cResponse[9];
   wireWrite(Command, 1, true);
   wireRead(i2cResponse, 9);
   // Check the data with CRC8
