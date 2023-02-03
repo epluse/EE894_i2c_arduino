@@ -30,9 +30,22 @@ We assume no liability for the information contained in this document.
 
 // Defines
 //-----------------------------------------------------------------------------
-#define CRC8_ONEWIRE_POLY 0x31
-#define CRC8_ONEWIRE_START 0xff
-
+#define CRC8_ONEWIRE_POLY                           0x31
+#define CRC8_ONEWIRE_START                          0xff
+#define EE894_COMMAND_A                             0xE000
+#define EE894_COMMAND_B                             0xE027
+#define EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS    0x7154
+#define EE894_MEM_ADDRESS_MEASUREMENT_INTERVALL     0x00
+#define EE894_MEM_ADDRESS_CAM_FOR_HUMIDITY          0x01
+#define EE894_MEM_ADDRESS_CAM_FOR_TEMPERATURE       0x02
+#define EE894_MEM_ADDRESS_CAM_FOR_PRESSURE          0x03
+#define EE894_MEM_ADDRESS_CAM_FOR_CO2               0x04
+#define EE894_MEM_ADDRESS_CAM_DATE_FOR_HUMIDITY     0x05 
+#define EE894_MEM_ADDRESS_CAM_DATE_FOR_TEMPERATURE  0x06
+#define EE894_MEM_ADDRESS_CAM_DATE_FOR_PRESSURE     0x07
+#define EE894_MEM_ADDRESS_CAM_DATE_FOR_CO2          0x08
+#define EE894_MEM_ADDRESS_GLOBAL_DATE               0x09
+#define EE894_MEM_ADDRESS_DEVICE_NAME               0x0A
 
 // declaration of functions
 //-----------------------------------------------------------------------------
@@ -49,12 +62,12 @@ public:
     //CAM = customer adjustment mode 
     uint8_t changeCAMDate(uint8_t measuredVariable, uint8_t day, uint8_t month, uint8_t year); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
     void readCAMDate(uint8_t measuredVariable, uint8_t &day, uint8_t &month, uint8_t &year); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
-    void readCAM(uint8_t measuredVariable, int &offset, uint16_t &gain, uint16_t &lowerLimit, uint16_t &upperLimit); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
-    uint8_t changeCAM(uint8_t measuredVariable, int offset, uint16_t gain, uint16_t lowerLimit, uint16_t upperLimit); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
-    uint8_t changeOffsetInCAM(uint8_t measuredVariable, int offset); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
-    uint8_t changeGainInCAM(uint8_t measuredVariable, uint16_t gain); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
-    uint8_t changeLowerLimitInCAM(uint8_t measuredVariable, uint16_t lowerLimit); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
-    uint8_t changeUpperLimitInCAM(uint8_t measuredVariable, uint16_t upperLimit); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
+    void readCAM(uint8_t measuredVariable, int &offset, uint16_t &gain, uint16_t &lowerLimit, uint16_t &upperLimit); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2
+    uint8_t changeCAM(uint8_t measuredVariable, int offset, uint16_t gain, uint16_t lowerLimit, uint16_t upperLimit); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2
+    uint8_t changeOffsetInCAM(uint8_t measuredVariable, int offset); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2 
+    uint8_t changeGainInCAM(uint8_t measuredVariable, uint16_t gain); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2
+    uint8_t changeLowerLimitInCAM(uint8_t measuredVariable, uint16_t lowerLimit); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2
+    uint8_t changeUpperLimitInCAM(uint8_t measuredVariable, uint16_t upperLimit); // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2
     uint8_t changeCo2MeasuringInterval(int measuringInterval); // min = 100 equivalent to 10 s,  max = 36000 equivalent to 1 hour 
     void readCo2MeasuringInterval(float &measuringInterval); // in 0.1 s steps
     unsigned char address = 0x33;

@@ -57,8 +57,8 @@ uint8_t ee894I2c::getAllMeasurements(float &temperature, float &humidity, float 
 
 uint8_t ee894I2c::getTempHum(float &temperature, float &humidity) 
 {
-  unsigned char Command[] = {0xE0, 0x00};
-  unsigned char i2cResponse[6];
+  unsigned char Command[] = {(EE894_COMMAND_A >> 8), (EE894_COMMAND_A & 0xFF)};
+  unsigned char i2cResponse[6] = {};
   wireWrite(Command, 1, true);
   wireRead(i2cResponse, 6);
   // Check the data with CRC8
@@ -77,8 +77,8 @@ uint8_t ee894I2c::getTempHum(float &temperature, float &humidity)
 
 uint8_t ee894I2c::getCo2AverCo2RawPressure(float &co2Aver, float &co2Raw, float &pressure)
 {
-  unsigned char Command[] = {0xE0, 0x27};
-  unsigned char i2cResponse[6];
+  unsigned char Command[] = {(EE894_COMMAND_B >> 8), (EE894_COMMAND_B & 0xFF)};
+  unsigned char i2cResponse[9] = {};
   wireWrite(Command, 1, true);
   wireRead(i2cResponse, 9);
   // Check the data with CRC8
@@ -99,7 +99,7 @@ uint8_t ee894I2c::getCo2AverCo2RawPressure(float &co2Aver, float &co2Raw, float 
 void ee894I2c::readSensorname(char Sensorname[])
 {
   unsigned char i2cResponse[17];
-  unsigned char Command[] = {0x71, 0x54, 0x0A}; 
+  unsigned char Command[] = {(EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS >> 8), (EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS & 0xFF), EE894_MEM_ADDRESS_DEVICE_NAME}; 
   wireWrite(Command, 2, true);
   wireRead(i2cResponse, 16);
   for (int i = 0; i < 16; i++)
@@ -111,7 +111,7 @@ void ee894I2c::readSensorname(char Sensorname[])
 
 void ee894I2c::changeSensorname(char Sensorname[])
 {
-  unsigned char Command[20] = {0x71, 0x54, 0x0A}; 
+  unsigned char Command[20] = {(EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS >> 8), (EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS & 0xFF), EE894_MEM_ADDRESS_DEVICE_NAME}; 
   for (int i = 0; i < 16; i++)
   {
     Command[i+3] = Sensorname[i];
@@ -126,8 +126,25 @@ uint8_t ee894I2c::changeCAMDate(uint8_t measuredVariable, uint8_t day, uint8_t m
 {
   if((day < 32 && day > 0) && (month < 13 && month > 0) && (year < 100 && year >= 0))
   {
-    unsigned char Command[7] = {0x71, 0x54, 0x00};
-    Command[2] = measuredVariable + 5;
+    unsigned char Command[7] = {(EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS >> 8), (EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS & 0xFF), 0x00};
+    switch (measuredVariable)
+    {
+      case 0:
+        Command[2] = {EE894_MEM_ADDRESS_CAM_DATE_FOR_HUMIDITY};
+        break;
+      case 1:
+        Command[2] = {EE894_MEM_ADDRESS_CAM_DATE_FOR_TEMPERATURE};
+        break;
+      case 2:
+        Command[2] = {EE894_MEM_ADDRESS_CAM_DATE_FOR_PRESSURE};
+        break;
+      case 3:
+        Command[2] = {EE894_MEM_ADDRESS_CAM_DATE_FOR_CO2};
+        break;
+      case 4:
+        Command[2] = {EE894_MEM_ADDRESS_GLOBAL_DATE};
+        break;
+    }
     Command[3] = day;
     Command[4] = month;
     Command[5] = year;
@@ -145,9 +162,26 @@ uint8_t ee894I2c::changeCAMDate(uint8_t measuredVariable, uint8_t day, uint8_t m
 
 void ee894I2c::readCAMDate(uint8_t measuredVariable, uint8_t &day, uint8_t &month, uint8_t &year) // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2, 4 => global date 
 {
-  unsigned char Command[7] = {0x71, 0x54, 0x00};
+  unsigned char Command[7] = {(EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS >> 8), (EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS & 0xFF), 0x00};
   unsigned char i2cResponse[3];
-  Command[2] = measuredVariable + 5;
+  switch (measuredVariable)
+  {
+    case 0:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_DATE_FOR_HUMIDITY};
+      break;
+    case 1:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_DATE_FOR_TEMPERATURE};
+      break;
+    case 2:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_DATE_FOR_PRESSURE};
+      break;
+    case 3:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_DATE_FOR_CO2};
+      break;
+    case 4:
+      Command[2] = {EE894_MEM_ADDRESS_GLOBAL_DATE};
+      break;
+  }
   wireWrite(Command, 2, true);
   wireRead(i2cResponse, 3);
   day = i2cResponse[0];
@@ -158,7 +192,22 @@ void ee894I2c::readCAMDate(uint8_t measuredVariable, uint8_t &day, uint8_t &mont
 
 void ee894I2c::readCAM(uint8_t measuredVariable, int &offset, uint16_t &gain, uint16_t &lowerLimit, uint16_t &upperLimit) // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2 
 {
-  unsigned char Command[7] = {0x71, 0x54, 0x00};
+  unsigned char Command[7] = {(EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS >> 8), (EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS & 0xFF)};
+  switch (measuredVariable)
+  {
+    case 0:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_FOR_HUMIDITY};
+      break;
+    case 1:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_FOR_TEMPERATURE};
+      break;
+    case 2:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_FOR_PRESSURE};
+      break;
+    case 3:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_FOR_CO2};
+      break;
+  }
   Command[2] = measuredVariable + 1;
   unsigned char i2cResponse[8];
   wireWrite(Command, 2, true);
@@ -172,8 +221,22 @@ void ee894I2c::readCAM(uint8_t measuredVariable, int &offset, uint16_t &gain, ui
 
 uint8_t ee894I2c::changeCAM(uint8_t measuredVariable, int offset, uint16_t gain, uint16_t lowerLimit, uint16_t upperLimit) // 0 => relative humidity, 1 => temperature, 2 => pressure, 3 => CO2
 {
-  unsigned char Command[12] = {0x71, 0x54, 0x00};
-  Command[2] = measuredVariable + 1;
+  unsigned char Command[12] = {(EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS >> 8), (EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS & 0xFF)};
+  switch (measuredVariable)
+  {
+    case 0:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_FOR_HUMIDITY};
+      break;
+    case 1:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_FOR_TEMPERATURE};
+      break;
+    case 2:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_FOR_PRESSURE};
+      break;
+    case 3:
+      Command[2] = {EE894_MEM_ADDRESS_CAM_FOR_CO2};
+      break;
+  }
   Command[3] = (offset >> 8);
   Command[4] = offset & 0xFF;
   Command[5] = (gain >> 8);
@@ -234,7 +297,7 @@ uint8_t ee894I2c::changeCo2MeasuringInterval(int measuringInterval) // min = 100
   {
     unsigned char sendByte0 = measuringInterval / 256;
     unsigned char sendByte1 = measuringInterval % 256;
-    unsigned char Command[6] = {0x71, 0x54, 0x00, sendByte0, sendByte1, 0x00}; 
+    unsigned char Command[6] = {(EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS >> 8), (EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS & 0xFF), EE894_MEM_ADDRESS_MEASUREMENT_INTERVALL, sendByte0, sendByte1, 0x00}; 
     Command[5] = calcCrc8(Command, 2, 4);
     wireWrite(Command, 5, true);
   }
@@ -250,7 +313,7 @@ uint8_t ee894I2c::changeCo2MeasuringInterval(int measuringInterval) // min = 100
 void ee894I2c::readCo2MeasuringInterval(float &measuringInterval) // in 0.1 s steps
 {
   unsigned char i2cResponse[2];
-  unsigned char Command[] = {0x71, 0x54, 0x00};
+  unsigned char Command[] = {(EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS >> 8), (EE894_COMMAND_FOR_CUSTOMER_MEMORY_ACCESS & 0xFF)};
   wireWrite(Command, 2, true);
   wireRead(i2cResponse, 2);
   measuringInterval = ((float)(i2cResponse[0]) * 256 + i2cResponse[1]) / 10;
