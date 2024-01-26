@@ -8,7 +8,8 @@
 |![EE894_standard](./images/EE894-co2-element_standard.png) | ![EE894_compact](./images/EE894-co2-element_compact.png)|
 
 
-[![button1](./images/learn-more.png)](https://www.epluse.com/en/products/co2-measurement/co2-sensor/ee894/)   [![button2](./images/data-sheet.png)](https://downloads.epluse.com/fileadmin/data/product/ee894/datasheet_EE894.pdf) 
+    [![button1](./images/learn-more.png)](https://www.epluse.com/en/products/co2-measurement/co2-sensor/ee894/)   
+[![button2](./images/data-sheet.png)](https://downloads.epluse.com/fileadmin/data/product/ee894/datasheet_EE894.pdf) 
 
 
 
